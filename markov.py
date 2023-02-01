@@ -63,19 +63,6 @@ def make_chains(text_string, n_count):
 #    print(chains)
     return chains
 
-#         for i in range(len(words_list)-1):
-#           if i+n_count <= len(words_list)-1:
-#             if (words_list[i], words_list[i + 1], words_list[i + 2]) not in chains:
-#                 value_list=[]
-#                 chains[(words_list[i], words_list[i + 1], words_list[i + 2])] = list([words_list[i + 3]])
-#  #               print(chains)
-#             if (words_list[i], words_list[i + 1]) in chains:
-
-#                 chains[(words_list[i], words_list[i + 1])] += ([words_list[i + 2]])
-#         else:
-#             continue
-
-
 def make_text(chains, n_count):
     """Return text from chains."""
 
@@ -84,20 +71,22 @@ def make_text(chains, n_count):
         keys_list = list(chains.keys())
         link = choice(keys_list)
         first_char = link[0][0]
-        print (first_char)
-        if first_char.isupper() == True:
+#        print (first_char)
+        if not first_char.isupper():
+            link = choice(keys_list)
+            continue
 
-            nth_link = choice(chains[link])
-            for i in range (len(link)-1):
-                words.append(str(link[i]))
+        nth_link = choice(chains[link])
+        for i in range (len(link)-1):
+            words.append(str(link[i]))
             words.append(str(nth_link))
             new_key = link[1:i+n_count] + (nth_link,)
-            if new_key in chains:
-                continue
-            elif new_key not in chains:
-                break
-        elif link[0][0].isupper() == False:
+        if new_key in chains:
             continue
+        elif new_key not in chains:
+            break
+        # elif not link[0][0].isupper():
+        #     continue
     words= ' '.join(words)
     # print(words)
     return words
