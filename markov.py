@@ -1,6 +1,7 @@
 """Generate Markov text from text files."""
 
 from random import choice
+import sys
 
 # text = f.read('green-eggs.txt')
 
@@ -14,12 +15,12 @@ def open_and_read_file(file_path):
 
     # your code goes here
     text = open(file_path).read()
-    print(text)
+ #   print(text)
     
     return text
 
 
-def make_chains(text_string):
+def make_chains(text_string, n_count):
     """Take input text as string; return dictionary of Markov chains.
 
     A chain will be a key that consists of a tuple of (word1, word2)
@@ -50,40 +51,69 @@ def make_chains(text_string):
 
     # your code goes here
     for i in range(len(words_list)-1):
-        if i+2 <= len(words_list)-1:
-            if (words_list[i], words_list[i + 1]) not in chains:
-                value_list=[]
-                chains[(words_list[i], words_list[i + 1])] = list([words_list[i + 2]])
- #               print(chains)
-            if (words_list[i], words_list[i + 1]) in chains:
+        if i+n_count <= len(words_list)-1:
+            current_key = tuple(words_list[i:i+n_count])
+            if current_key not in chains:
+                chains[current_key] = list([words_list[i + n_count]])
+            if current_key in chains:
 
-                chains[(words_list[i], words_list[i + 1])] += ([words_list[i + 2]])
+                chains[current_key] += ([words_list[i + n_count]])
         else:
             continue
-    print(chains)
+#    print(chains)
     return chains
 
+#         for i in range(len(words_list)-1):
+#           if i+n_count <= len(words_list)-1:
+#             if (words_list[i], words_list[i + 1], words_list[i + 2]) not in chains:
+#                 value_list=[]
+#                 chains[(words_list[i], words_list[i + 1], words_list[i + 2])] = list([words_list[i + 3]])
+#  #               print(chains)
+#             if (words_list[i], words_list[i + 1]) in chains:
 
-def make_text(chains):
+#                 chains[(words_list[i], words_list[i + 1])] += ([words_list[i + 2]])
+#         else:
+#             continue
+
+
+def make_text(chains, n_count):
     """Return text from chains."""
 
     words = []
+    while True:
+        keys_list = list(chains.keys())
+        link = choice(keys_list)
+        first_char = link[0][0]
+        print (first_char)
+        if first_char.isupper() == True:
 
-    # your code goes here
+            nth_link = choice(chains[link])
+            for i in range (len(link)-1):
+                words.append(str(link[i]))
+            words.append(str(nth_link))
+            new_key = link[1:i+n_count] + (nth_link,)
+            if new_key in chains:
+                continue
+            elif new_key not in chains:
+                break
+        elif link[0][0].isupper() == False:
+            continue
+    words= ' '.join(words)
+    # print(words)
+    return words
 
-    return ' '.join(words)
 
-
-input_path = 'gettysburg.txt'
+#input_path = 'adventure_time.txt'
+input_path = str(sys.argv[1])
 
 # Open the file and turn it into one long string
 input_text = open_and_read_file(input_path)
 
 # Get a Markov chain
-chains = make_chains(input_text)
+chains = make_chains(input_text, 4)
 
 # Produce random text
-random_text = make_text(chains)
+random_text = make_text(chains, 4)
 
 print(random_text)
 
